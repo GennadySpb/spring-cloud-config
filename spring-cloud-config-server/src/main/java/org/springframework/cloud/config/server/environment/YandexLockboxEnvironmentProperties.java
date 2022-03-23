@@ -1,0 +1,150 @@
+/*
+ * Copyright 2013-2022 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.springframework.cloud.config.server.environment;
+
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.config.server.support.EnvironmentRepositoryProperties;
+import org.springframework.core.Ordered;
+
+@ConfigurationProperties("spring.cloud.config.server.yandex-lockbox")
+public class YandexLockboxEnvironmentProperties implements EnvironmentRepositoryProperties {
+
+	static final String DEFAULT_PATH_SEPARATOR = "/";
+
+	private static final String DEFAULT_PREFIX = DEFAULT_PATH_SEPARATOR + "secret";
+
+	private static final String DEFAULT_PROFILE_SEPARATOR = "-";
+
+	private static final String DEFAULT_ORIGIN = "aws:secrets:";
+
+	/**
+	 * The region to be used by AWS Secrets Manager client.
+	 */
+	private String region;
+
+	/**
+	 * The endpoint to be used by AWS Secrets Manager client. This can be used to specify
+	 * an alternate endpoint for the API requests.
+	 */
+	private String endpoint;
+
+	/**
+	 * The order of the environment repository.
+	 */
+	private int order = Ordered.LOWEST_PRECEDENCE;
+
+	/**
+	 * Prefix indicating first level for every property loaded from AWS Secrets Manager.
+	 * Value must start with a forward slash followed by a valid path segment or be empty.
+	 * Defaults to "/secret".
+	 */
+	@NotNull
+	@Pattern(regexp = "(/[a-zA-Z0-9.\\-_]+)*")
+	private String prefix = DEFAULT_PREFIX;
+
+	/**
+	 * String that separates profile from the application name.
+	 */
+	@NotNull
+	@Pattern(regexp = "[a-zA-Z0-9.\\-_]+")
+	private String profileSeparator = DEFAULT_PROFILE_SEPARATOR;
+
+	/**
+	 * Prefix which indicates the origin of the property. Defaults to "aws:secrets:".
+	 */
+	@NotNull
+	private String origin = DEFAULT_ORIGIN;
+	private String applicationLabel = "application";
+	private String profileLabel = "profile";
+	private boolean tokenMandatory;
+
+	public String getRegion() {
+		return region;
+	}
+
+	public void setRegion(String region) {
+		this.region = region;
+	}
+
+	public String getEndpoint() {
+		return endpoint;
+	}
+
+	public void setEndpoint(String endpoint) {
+		this.endpoint = endpoint;
+	}
+
+	public int getOrder() {
+		return order;
+	}
+
+	@Override
+	public void setOrder(int order) {
+		this.order = order;
+	}
+
+	public String getPrefix() {
+		return prefix;
+	}
+
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
+	}
+
+	public String getProfileSeparator() {
+		return profileSeparator;
+	}
+
+	public void setProfileSeparator(String profileSeparator) {
+		this.profileSeparator = profileSeparator;
+	}
+
+	public String getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(String origin) {
+		this.origin = origin;
+	}
+
+	public String getApplicationLabel() {
+		return applicationLabel;
+	}
+
+	public void setApplicationLabel(String applicationLabel) {
+		this.applicationLabel = applicationLabel;
+	}
+
+	public String getProfileLabel() {
+		return profileLabel;
+	}
+
+	public void setProfileLabel(String profileLabel) {
+		this.profileLabel = profileLabel;
+	}
+
+	public boolean getTokenMandatory() {
+		return tokenMandatory;
+	}
+
+	public void setTokenMandatory(boolean tokenMandatory) {
+		this.tokenMandatory = tokenMandatory;
+	}
+}

@@ -27,6 +27,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.apache.http.client.HttpClient;
 import org.eclipse.jgit.api.TransportConfigCallback;
 import org.tmatesoft.svn.core.SVNException;
+import yandex.cloud.sdk.ServiceFactory;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
@@ -83,6 +84,9 @@ import org.springframework.cloud.config.server.environment.SvnKitEnvironmentRepo
 import org.springframework.cloud.config.server.environment.VaultEnvironmentProperties;
 import org.springframework.cloud.config.server.environment.VaultEnvironmentRepository;
 import org.springframework.cloud.config.server.environment.VaultEnvironmentRepositoryFactory;
+import org.springframework.cloud.config.server.environment.YandexLockboxEnvironmentProperties;
+import org.springframework.cloud.config.server.environment.YandexLockboxEnvironmentRepository;
+import org.springframework.cloud.config.server.environment.YandexLockboxEnvironmentRepositoryFactory;
 import org.springframework.cloud.config.server.environment.vault.SpringVaultClientConfiguration;
 import org.springframework.cloud.config.server.environment.vault.SpringVaultEnvironmentRepository;
 import org.springframework.cloud.config.server.environment.vault.SpringVaultEnvironmentRepositoryFactory;
@@ -116,13 +120,14 @@ import org.springframework.vault.core.VaultTemplate;
 		JdbcEnvironmentProperties.class, NativeEnvironmentProperties.class, VaultEnvironmentProperties.class,
 		RedisEnvironmentProperties.class, AwsS3EnvironmentProperties.class,
 		AwsSecretsManagerEnvironmentProperties.class, AwsParameterStoreEnvironmentProperties.class,
-		GoogleSecretManagerEnvironmentProperties.class })
+		GoogleSecretManagerEnvironmentProperties.class, YandexLockboxEnvironmentProperties.class })
 @Import({ CompositeRepositoryConfiguration.class, JdbcRepositoryConfiguration.class, VaultConfiguration.class,
 		VaultRepositoryConfiguration.class, SpringVaultRepositoryConfiguration.class, CredhubConfiguration.class,
 		CredhubRepositoryConfiguration.class, SvnRepositoryConfiguration.class, NativeRepositoryConfiguration.class,
 		GitRepositoryConfiguration.class, RedisRepositoryConfiguration.class, GoogleCloudSourceConfiguration.class,
 		AwsS3RepositoryConfiguration.class, AwsSecretsManagerRepositoryConfiguration.class,
 		AwsParameterStoreRepositoryConfiguration.class, GoogleSecretManagerRepositoryConfiguration.class,
+		YandexLockboxRepositoryConfiguration.class,
 		// DefaultRepositoryConfiguration must be last
 		DefaultRepositoryConfiguration.class })
 public class EnvironmentRepositoryConfiguration {
@@ -228,6 +233,18 @@ public class EnvironmentRepositoryConfiguration {
 		public AwsSecretsManagerEnvironmentRepositoryFactory awsSecretsManagerEnvironmentRepositoryFactory(
 				ConfigServerProperties configServerProperties) {
 			return new AwsSecretsManagerEnvironmentRepositoryFactory(configServerProperties);
+		}
+
+	}
+
+	@Configuration(proxyBeanMethods = false)
+	@ConditionalOnClass(ServiceFactory.class)
+	static class YandexLockboxFactoryConfig {
+
+		@Bean
+		public YandexLockboxEnvironmentRepositoryFactory yandexLockboxEnvironmentRepositoryFactory(
+				ConfigServerProperties configServerProperties) {
+			return new YandexLockboxEnvironmentRepositoryFactory(configServerProperties);
 		}
 
 	}
@@ -434,6 +451,20 @@ class AwsSecretsManagerRepositoryConfiguration {
 	public AwsSecretsManagerEnvironmentRepository awsSecretsManagerEnvironmentRepository(
 			AwsSecretsManagerEnvironmentRepositoryFactory factory,
 			AwsSecretsManagerEnvironmentProperties environmentProperties) {
+		return factory.build(environmentProperties);
+	}
+
+}
+
+@Configuration(proxyBeanMethods = false)
+@Profile("yandexlockbox")
+class YandexLockboxRepositoryConfiguration {
+
+	@Bean
+	@ConditionalOnMissingBean(YandexLockboxEnvironmentRepository.class)
+	public YandexLockboxEnvironmentRepository yandexLockboxEnvironmentRepository(
+			YandexLockboxEnvironmentRepositoryFactory factory,
+			YandexLockboxEnvironmentProperties environmentProperties) {
 		return factory.build(environmentProperties);
 	}
 

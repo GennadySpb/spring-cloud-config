@@ -101,6 +101,16 @@
 				<version>0.22.0</version>
 			</dependency>
 			<dependency>
+				<groupId>com.yandex.cloud</groupId>
+				<artifactId>java-sdk-services</artifactId>
+				<version>2.3.1</version>
+			</dependency>
+			<dependency>
+				<groupId>io.grpc</groupId>
+				<artifactId>grpc-core</artifactId>
+				<version>1.28.1</version>
+			</dependency>
+			<dependency>
 				<groupId>com.google.cloud</groupId>
 				<artifactId>google-cloud-secretmanager</artifactId>
 				<version>1.0.1</version>
@@ -116,8 +126,8 @@
 				<version>${testcontainers.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
-      </dependency>
-      <dependency>
+			</dependency>
+			<dependency>
 				<groupId>com.github.tomakehurst</groupId>
 				<artifactId>wiremock-jre8</artifactId>
 				<version>${wiremock.version}</version>
@@ -126,63 +136,28 @@
 	</dependencyManagement>
 	<profiles>
 		<profile>
-			<id>spring</id>
+			<id>maven-central-repo</id>
 			<repositories>
 				<repository>
-					<id>spring-snapshots</id>
-					<name>Spring Snapshots</name>
-					<url>https://repo.spring.io/snapshot</url>
-					<snapshots>
-						<enabled>true</enabled>
-					</snapshots>
-					<releases>
-						<enabled>false</enabled>
-					</releases>
-				</repository>
-				<repository>
-					<id>spring-milestones</id>
-					<name>Spring Milestones</name>
-					<url>https://repo.spring.io/milestone</url>
 					<snapshots>
 						<enabled>false</enabled>
 					</snapshots>
-				</repository>
-				<repository>
-					<id>spring-releases</id>
-					<name>Spring Releases</name>
-					<url>https://repo.spring.io/release</url>
-					<snapshots>
-						<enabled>false</enabled>
-					</snapshots>
+					<id>central1</id>
+					<name>Maven Repository Switchboard</name>
+					<url>https://repo1.maven.org/maven2</url>
 				</repository>
 			</repositories>
 			<pluginRepositories>
 				<pluginRepository>
-					<id>spring-snapshots</id>
-					<name>Spring Snapshots</name>
-					<url>https://repo.spring.io/snapshot</url>
-					<snapshots>
-						<enabled>true</enabled>
-					</snapshots>
 					<releases>
-						<enabled>false</enabled>
+						<updatePolicy>never</updatePolicy>
 					</releases>
-				</pluginRepository>
-				<pluginRepository>
-					<id>spring-milestones</id>
-					<name>Spring Milestones</name>
-					<url>https://repo.spring.io/milestone</url>
 					<snapshots>
 						<enabled>false</enabled>
 					</snapshots>
-				</pluginRepository>
-				<pluginRepository>
-					<id>spring-releases</id>
-					<name>Spring Releases</name>
-					<url>https://repo.spring.io/release</url>
-					<snapshots>
-						<enabled>false</enabled>
-					</snapshots>
+					<id>central1</id>
+					<name>Maven Plugin Repository</name>
+					<url>https://repo1.maven.org/maven2</url>
 				</pluginRepository>
 			</pluginRepositories>
 		</profile>
